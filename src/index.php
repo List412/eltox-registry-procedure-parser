@@ -10,4 +10,5 @@ $baseURL = "https://eltox.ru/registry/procedure";
 
 $content = file_get_contents($baseURL);
 
+
 echo  $content;
