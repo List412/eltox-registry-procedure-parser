@@ -24,7 +24,7 @@ $pagesCounter = (int)($paginator[0]->children[$paginationCount-3]->nodes[0]->inn
 
 $procedureArray = array();
 
-for ($page = 1; $page <= $pagesCounter; $page++) {
+for ($page = 1; $page <= 1; $page++) {
 
     $siteURLFilerPage = "https://eltox.ru/registry/procedure/page/$page?id=&procedure=&oos_id=&company=&inn=&type=1&price_from=&price_to=&published_from=&published_to=&offer_from=&offer_to=&status=";
 
@@ -55,6 +55,25 @@ for ($page = 1; $page <= $pagesCounter; $page++) {
     echo 'page ' . $page;
 }
 $content->clear();
+
+$servername = "localhost";
+$username = "list";
+$password = "1234";
+$dbname = "test";
+
+// mysqli
+$mysqli = new mysqli("localhost", "list", "1234", "test");
+
+foreach ($procedureArray as $item)
+{
+    $sql = "INSERT INTO `Procedure` (ID, OOS, Link, email) VALUES ('$item->id', '$item->oos', 'j$item->link', '$item->email')";
+    if (mysqli_query($mysqli, $sql)) echo $item->id . 'ok ' ; else echo $item->id . ' not ';
+    foreach ($item->document as $doc)
+    {
+        $sql = "INSERT INTO `Document` (Name, Link, ProcedureId) VALUES ('$doc->name', '$doc->link', '$item->id')";
+        if (mysqli_query($mysqli, $sql)) echo $doc->name . 'ok ' ; else echo $doc->name . ' not ';
+    }
+}
 
 function  parseDocumentsFromScript(string $src)
 {
