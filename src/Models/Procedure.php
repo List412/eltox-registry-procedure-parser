@@ -14,11 +14,8 @@ class Procedure
     public $email;
     public $document;
 
-    public function __construct($id, $oos, $link, $email, $document)
+    public function __construct()
     {
-        $this->id=$id;
-        $this->oos=$oos;
-        $this->link=$link;
-        $this->document=$document;
+
     }
 }

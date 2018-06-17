@@ -11,9 +11,8 @@ class Document
     public $name;
     public $link;
 
-    public function __construct($name, $link)
+    public function __construct()
     {
-        $this->name=$name;
-        $this->link=$link;
+
     }
 }
