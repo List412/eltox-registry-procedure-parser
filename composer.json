@@ -1,0 +1,10 @@
+{
+    "name": "burlakov/eltox-registry-procedure-parser",
+    "description": "php parser eltox site with tenders, used mongodb",
+    "type": "project",
+    "require": {
+        "querypath/querypath": "^3.0",
+        "guzzlehttp/guzzle": "^6.3"
+    },
+    "license": "free"
+}
