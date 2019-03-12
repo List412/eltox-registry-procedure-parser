@@ -6,6 +6,8 @@
  * Time: 22:05
  */
 
+require 'mongo_db.php';
+
 class eltox
 {
     const PREFIX    = 'eltox';
@@ -15,12 +17,14 @@ class eltox
 
     private $web;
     private $options;
+    private $db;
 
     function __construct($options = null) {
         $this->web = new \GuzzleHttp\Client([
             'base_uri' => self::SITE,
         ]);
         $this->options = $options;
+        $this->db = new mongo_db(self::PREFIX);
     }
 
 
@@ -163,7 +167,12 @@ class eltox
             }
         }
 
-        return ['tender' => $tender, 'organizer' =>  $organizer, 'customer' =>  $customer,'lot' =>  $lot, 'docs' =>  $documents];
+        $tender['organizer'] = $organizer;
+        $tender['customer'] = $customer;
+        $tender['lot'] = $lot;
+        $tender['docs'] = $documents;
+
+        return $tender;
     }
 
 
@@ -275,7 +284,7 @@ class eltox
         if (isset($this->options->href)) {
             $data = $this->parse_hrefs([$this->options->href]);
             print_r($data);
-            // TODO check if exist and add to mongodb or update
+            $this->db->add($data);
             return;
         }
 
@@ -292,7 +301,7 @@ class eltox
 
         foreach ($this->walk_through_list($limit, $filter) as $hrefs) {
             $data = $this->parse_hrefs($hrefs);
-            // TODO check if exist and add to mongodb or update
+            $this->db->add($data);
         }
     }
 }
