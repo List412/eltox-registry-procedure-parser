@@ -11,9 +11,9 @@ require 'mongo_db.php';
 class eltox
 {
     const PREFIX    = 'eltox';
-    const URL       = "https://eltox.ru/registry/procedure/page/";
+    const URL       = "https://etp.eltox.ru/registry/procedure/page/";
     const STORAGE   = "http://storage.eltox.ru/";
-    const SITE      = "https://eltox.ru";
+    const SITE      = "https://etp.eltox.ru";
 
     private $web;
     private $options;
@@ -111,6 +111,7 @@ class eltox
     private function parse_content($qp) {
 
         $htmlTender = $qp->html5();
+//        print_r($htmlTender); die();
         $data['canceled'] = preg_match('#Дата отмены\:?\s*\d{2}\.\d{2}\.\d{4}#usi', $htmlTender);
 
         $table = $qp->find('#tab-basic .detail-view')->first();
@@ -197,23 +198,13 @@ class eltox
     private function get_filtered_list($filter, $page_number = 1) {
 
         $query = http_build_query([
-            'id'              => @$filter['id']?:'',
-            'procedure'       => '',
-            'oos_id'          => '',
-            'company'         => '',
-            'inn'             => '',
-            'type'            => 0,
-            'price_from'      => '',
-            'price_to'        => '',
             'published_from'  => (string) @$filter['date_from'],
             'published_to'    => (string) @$filter['date_to'],
-            'offer_from'      => '',
-            'offer_to'        => '',
-            'status'          => '',
         ]);
         $query = preg_replace('/%5B[0-9]+%5D/i', '', $query);
 
         return htmlqp($this->get_content(self::URL .$page_number. '?' . $query));
+//        return htmlqp($this->get_content("https://etp.eltox.ru/registry/procedure?id=&procedure=&oos_id=&company=&inn=&type=0&price_from=&price_to=&published_from=06.03.2019&published_to=30.03.2019&offer_from=&offer_to=&status="));
     }
 
 
@@ -223,11 +214,14 @@ class eltox
      */
     private function parse_list($qp) {
         $hrefs = [];
-        $rows = $qp->find('div.registerBox.procedure-list-item');
+        $rows = $qp->find('div.registerBox');
+//        print_r($qp->html());
         foreach ($rows as $row) {
-            $href = $row->find('a[href*=procedure]')->first()->attr('href');
+            $href = $row->find('a[href*="procedure"]')->first()->attr('href');
             $hrefs []= $href;
         }
+
+        print_r($hrefs);
 
         return $hrefs;
     }
@@ -289,8 +283,8 @@ class eltox
         }
 
         $filter = [
-            'date_from' => date('d.m.Y', strtotime('yesterday')),
-            'date_to' => date('d.m.Y', strtotime('now')),
+            'date_from' => date('d.m.Y', strtotime('-30 days')),
+            'date_to' => date('d.m.Y', strtotime('yesterday')),
         ];
         $limit = 3;
 
